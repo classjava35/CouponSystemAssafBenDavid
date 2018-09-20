@@ -1,0 +1,11 @@
+a_GeneralExplanationAboutTheProject
+b_DataBaseCreation
+c_coupon.sys.core.beans
+d_coupon.sys.core.connection
+e_coupon.sys.core.dao
+f_coupon.sys.core.dao.db
+g_coupon.sys.core.facade
+h_coupon.sys.singleton
+i_couponSystemException
+j_daily.tread
+k_tests
