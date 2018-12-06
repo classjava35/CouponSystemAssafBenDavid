@@ -1,6 +1,4 @@
 package g_coupon.sys.core.facade;
-
-import i_couponSystemException.FacadeException;
 /**
  * FACADE - interface will describe the business logic.
  * <b>NOTE -According to Eldar's instructions we removed the Login method. Login method will be implemented at the Client side.</b>

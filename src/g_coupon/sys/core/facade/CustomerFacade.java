@@ -1,9 +1,7 @@
 package g_coupon.sys.core.facade;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-import c_coupon.sys.core.beans.Company;
 import c_coupon.sys.core.beans.Coupon;
 import c_coupon.sys.core.beans.Customer;
 import c_coupon.sys.core.beans.coupontype;
@@ -22,18 +20,21 @@ import i_couponSystemException.CouponSystemException;
  * @since 2018-09-06
  */
 public class CustomerFacade implements CouponClientFacade {
-	private CompanyDaoDB compDaoDB;
 	private CustomerDaoDB custDaoDB;
 	private CouponDaoDB couponDaoDB;
-
+	private Customer customer;
 	/**
 	 * CustomerFacade Constructor initialing the CompanyDaoDB, CustomerDaoDB ,CouponDaoDB classes, to use it later on in the Facade logic.
+	 * @param object 
+	 * @param customerDao 
+	 * @param couponDao 
 	 */
-	public CustomerFacade() {
+	public CustomerFacade(CouponDaoDB couponDao, CustomerDaoDB customerDao, Customer customer) {
 		super();
-		compDaoDB = new CompanyDaoDB();
+		new CompanyDaoDB();
 		custDaoDB = new CustomerDaoDB();
 		couponDaoDB = new CouponDaoDB();
+		this.customer = customer;
 	}
 
 	/**
@@ -42,19 +43,19 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @param coupon The Coupon from the Java Beans
 	 * @throws CouponSystemException
 	 */
-	public void purchaseCoupon(Customer customer, Coupon coupon) throws CouponSystemException {
+	public void purchaseCoupon(Coupon coupon) throws CouponSystemException {
 		try {
-			if ((couponDaoDB.couponExistByName(coupon))
+			if (couponDaoDB.couponExistByName(coupon)
 					&& (!custDaoDB.customerPurchasedCoupon(customer.getId(), coupon.getId()))
 					&& (!couponDaoDB.expiriedCoupon(coupon))) {
 				custDaoDB.createCustomerCouponMap(customer.getId(), coupon.getId());
 			} else {
-				throw new FacadeException("The Coupon: " + customer.getCustName()
+				throw new FacadeException("The Coupon: " + coupon.getId()
 						+ " Doesn't exist in Stock , Or already been purchased, Or Expiried ,per customer_name: "
-						+ customer.getCustName() + " coupon_id: " + coupon.getTitle());
+						+ customer.getCustName());
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("purchase Coupon failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("purchase Coupon failed "+ e.getMessage());
 		}
 
 	}
@@ -65,7 +66,7 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @return Coupon Collection of Purchased Coupons.
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getAllPurchasedCoupons(Customer customer) throws CouponSystemException {
+	public Collection<Coupon> getAllPurchasedCoupons() throws CouponSystemException {
 		Collection<Coupon> purchasedCoupons = custDaoDB.getAllCustomerPurchasedCoupons(customer);
 		try {
 			if (custDaoDB.customerExistByName(customer.getCustName())) {
@@ -81,13 +82,34 @@ public class CustomerFacade implements CouponClientFacade {
 	}
 
 	/**
+	 * getAllPurchasedCoupons method return all Purchased Coupons by this Customer. 
+	 * @param customer The Customer from the Java Bean.
+	 * @return Coupon Collection of Purchased Coupons.
+	 * @throws CouponSystemException
+	 */
+	public Collection<Coupon> getAllUnPurchasedCoupons() throws CouponSystemException {
+		Collection<Coupon> unPurchasedCoupons = custDaoDB.getAllCustomerUnPurchasedCoupons(customer);
+		try {
+			if (custDaoDB.customerExistByName(customer.getCustName())) {
+				System.out.println(unPurchasedCoupons);
+				return unPurchasedCoupons;
+			} else {
+				throw new FacadeException(
+						"customer_name doesn't exist in DB,  customer_name: " + customer.getCustName());
+			}
+		} catch (CouponSystemException e) {
+			throw new FacadeException("get All UnPurchased Coupons failed", e);
+		}
+	}
+	
+	/**
 	 * getAllPurchasedCouponsByType method return all Purchased Coupons by Type (ENUM couponType) per Customer.
 	 * @param customer The Customer from the Java Bean.
 	 * @param couponType from ENUM couponType
 	 * @return Coupon Collection of Purchased Coupons.
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getAllPurchasedCouponsByType(Customer customer, coupontype couponType)
+	public Collection<Coupon> getAllPurchasedCouponsByType(coupontype couponType)
 			throws CouponSystemException {
 		Collection<Coupon> CouponsByType = couponDaoDB.getCustomerCouponByType(customer, couponType);
 		try {
@@ -108,7 +130,7 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @return Coupon Collection of Purchased Coupons.
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getAllPurchasedCouponsByPrice(Customer customer, double price)
+	public Collection<Coupon> getAllPurchasedCouponsByPrice(double price)
 			throws CouponSystemException {
 		Collection<Coupon> CouponsByPrice = couponDaoDB.getCustomerCouponByPrice(customer, price);
 		try {
@@ -122,5 +144,20 @@ public class CustomerFacade implements CouponClientFacade {
 			throw new FacadeException("get All Coupons by price perCustomer failed ", e);
 		}
 	}
+
+	public Collection<Coupon> getAllCoupons() throws CouponSystemException {
+		Collection<Coupon> Coupons = couponDaoDB.getAllCoupons();
+		try {
+			if (Coupons != null) {
+				return Coupons;
+			} else {
+				throw new FacadeException("There aren't any Coupons");
+			}
+		} catch (FacadeException e) {
+			throw new FacadeException("get All Coupons failed "+ e.getMessage());
+		}
+	}
+
+
 
 }

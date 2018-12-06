@@ -1,7 +1,13 @@
 package c_coupon.sys.core.beans;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 /**
  * <h1>Coupon class creates a new Coupon entity </h1>
  * <p>
@@ -12,6 +18,7 @@ import java.util.Calendar;
  * @version 1.0
  * @since 2018-09-06
  */
+@XmlRootElement
 public class Coupon {
 
 	private long id;
@@ -24,6 +31,11 @@ public class Coupon {
 	private double price;
 	private String image;
 
+	@JsonCreator
+	public Coupon() {
+		super();
+	}
+	
 	/**
 	 * This constructor create a new Coupon entity using 7 parameters. 
 	 * <p><b>Not setting the id parameter</b1>.
@@ -40,13 +52,16 @@ public class Coupon {
 	public Coupon(String title, Date startDate, Date endDate, int amount, coupontype type, String message, double price,
 			String image) {
 		super();
+		
+		
 		this.title = title;
 		this.startDate = startDate;
-			
-			Calendar c = Calendar.getInstance();
-			c.setTime(endDate);
-			c.add(Calendar.DATE, 30); //set Coupon's End DATE to 30 days from creation by Default
-		this.endDate = new java.sql.Date(c.getTimeInMillis());
+		this.endDate = 	endDate;
+	
+//			Calendar c = Calendar.getInstance();
+//			c.setTime(endDate);
+//			c.add(Calendar.DATE, 30); //set Coupon's End DATE to 30 days from creation by Default
+//		this.endDate = new java.sql.Date(c.getTimeInMillis());
 		this.amount = amount;
 		this.type = type;
 		this.message = message;
@@ -69,16 +84,16 @@ public class Coupon {
 	 * @param image The Coupon image
 	 */
 	public Coupon(long id, String title, Date startDate, Date endDate, int amount, coupontype type, String message,
-			double price, String image) {
+			double price, String image ) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.startDate = startDate;
-			
-			Calendar c = Calendar.getInstance();
-			c.setTime(endDate);
-			c.add(Calendar.DATE, 30); //set Coupon's End DATE to 30 days from creation by Default
-		this.endDate = new java.sql.Date(c.getTimeInMillis());
+		this.endDate = 	endDate;
+//			Calendar c = Calendar.getInstance();
+//			c.setTime(endDate);
+//			c.add(Calendar.DATE, 30); //set Coupon's End DATE to 30 days from creation by Default
+//		this.endDate = new java.sql.Date(c.getTimeInMillis());
 		this.amount = amount;
 		this.type = type;
 		this.message = message;
@@ -228,6 +243,7 @@ public class Coupon {
 		this.price = price;
 	}
 
+	
 	/**
 	 * Returns the Coupon image.
 	 * @return image - Coupon image
@@ -244,13 +260,12 @@ public class Coupon {
 		this.image = image;
 	}
 
+
 	@Override
 	public String toString() {
-		return "Coupon [id=" + id + ", " + (title != null ? "title=" + title + ", " : "")
-				+ (startDate != null ? "startDate=" + startDate + ", " : "")
-				+ (endDate != null ? "endDate=" + endDate + ", " : "") + "amount=" + amount + ", "
-				+ (type != null ? "type=" + type + ", " : "") + (message != null ? "message=" + message + ", " : "")
-				+ "price=" + price + ", " + (image != null ? "image=" + image : "") + "]";
+		return "Coupon [id=" + id + ", title=" + title + ", startDate=" + startDate + ", endDate=" + endDate
+				+ ", amount=" + amount + ", type=" + type + ", message=" + message + ", price=" + price + ", image="
+				+ image + "]";
 	}
 
 }

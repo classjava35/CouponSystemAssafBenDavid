@@ -43,7 +43,7 @@ public class c_Test_AdminFacade {
 			System.out.println("**************************************************");
 
 			Company company1 = new Company("admin " + rand, "1234", "com");
-			AdminFacade admFac = new AdminFacade();
+			AdminFacade admFac = new AdminFacade(null, null);
 			admFac.createCompany(company1);
 			company1.setCompName(company1.getCompName() + "1");
 			admFac.updateCompany(company1);
@@ -62,7 +62,7 @@ public class c_Test_AdminFacade {
 			System.out.println("**************************************************");
 			System.out.println("***** Customer Facade- create , update , get ,get All ****");
 			System.out.println("**************************************************");
-			Customer cust1 = new Customer("CustName " + rand, "Pass");
+			Customer cust1 = new Customer("Customer_Name " + rand, "Password");
 			admFac.createCustomer(cust1);
 
 			cust1.setCustName(cust1.getCustName() + "1");

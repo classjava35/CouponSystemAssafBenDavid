@@ -375,4 +375,33 @@ public class CompanyDaoDB implements CompanyDAO {
 		}
 	}
 
+	public Company getCompany(String company_name) throws CouponSystemException {
+		Company tempComp = null;
+		Connection con = ConnectionPool.getInstance().getConnection();
+		String sql = "select * from COMPANY where comp_name ='" + company_name+"'";
+		try (Statement stmt = con.createStatement();) {
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			if (rs.next() == false) {
+				return null;
+			} else {
+
+				long id = rs.getLong("company_id");
+				String name = rs.getString("comp_name");
+				String password = rs.getString("Password");
+				String email = rs.getString("email");
+
+				tempComp = new Company(id, name, password, email);
+			}
+
+			System.out.println("Get Company from DB was successful , company : " + tempComp);
+			return tempComp;
+		} catch (SQLException e) {
+			throw new DAOException(" Get Company from DB failed " + company_name, e);
+		} finally {
+			ConnectionPool.getInstance().returnConnection(con);
+		}
+	}
+	
 }

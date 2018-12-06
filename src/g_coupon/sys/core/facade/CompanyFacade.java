@@ -21,14 +21,17 @@ import i_couponSystemException.CouponSystemException;
 public class CompanyFacade implements CouponClientFacade {
 	private CompanyDaoDB compDaoDB;
 	private CouponDaoDB couponDaoDB;
-
+	private Company company;
 	/**
 	 * CompanyFacade Constructor initialing the CompanyDaoDB ,CouponDaoDB classes , to use it later on in the Facade logic.
+	 * @param companyDao 
+	 * @param couponDao 
 	 */
-	public CompanyFacade() {
+	public CompanyFacade(CouponDaoDB couponDao, CompanyDaoDB companyDao, Company company) {
 		super();
 		couponDaoDB = new CouponDaoDB();
 		compDaoDB = new CompanyDaoDB();
+		this.company = company;
 	}
 
 	/**
@@ -37,8 +40,9 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @param coupon The Coupon in the DB
 	 * @throws CouponSystemException
 	 */
-	public void createCoupon(Company company, Coupon coupon) throws CouponSystemException {
+	public void createCoupon(Coupon coupon) throws CouponSystemException {
 		try {
+			
 			if ((!couponDaoDB.couponExistByName(coupon)) && (compDaoDB.companyExistByName(company))) {
 				couponDaoDB.createCoupon(coupon);
 				compDaoDB.createCompanyCouponMap(company.getId(), coupon.getId());
@@ -47,12 +51,13 @@ public class CompanyFacade implements CouponClientFacade {
 			} else {
 				throw new FacadeException("Coupon title: " + coupon.getTitle() + " , already exists in the DB");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("create Coupon failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("create Coupon failed "+ e.getMessage());
 		}
 
 	}
 
+	
 	/**
 	 * removeCoupon method check if a Coupon exist in the DB, then if remove it from the reference table CUSTOMER_COUPON , COMPANY_COUPON and then remove it from the COUPON table. 
 	 * @param coupon The Coupon in the DB
@@ -61,14 +66,14 @@ public class CompanyFacade implements CouponClientFacade {
 	// couponExistById
 	public void removeCoupon(Coupon coupon) throws CouponSystemException {
 		try {
-			if (couponDaoDB.couponExistById(coupon)) {
+			if (couponDaoDB.couponExistById(coupon.getId())) {
 				couponDaoDB.removeCustomerCoupon(coupon);
 				couponDaoDB.removeCoupon(coupon);
 			} else {
 				throw new FacadeException("Company Id: " + coupon.getId() + " , doesn't exists in the DB");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("remove Company failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("remove Company failed "+e.getMessage());
 		}
 	}
 
@@ -83,9 +88,9 @@ public class CompanyFacade implements CouponClientFacade {
 	public void updateCoupon(Coupon coupon) throws CouponSystemException {
 		Coupon updatedCoupon;
 		try {
-			if (couponDaoDB.couponExistById(coupon)) {
+			if (couponDaoDB.couponExistById(coupon.getId())) {
 				updatedCoupon = couponDaoDB.getCoupon(coupon.getId());
-				updatedCoupon.setTitle(coupon.getTitle());
+			//	updatedCoupon.setTitle(coupon.getTitle());
 				updatedCoupon.setStartDate(coupon.getStartDate());
 				updatedCoupon.setEndDate(coupon.getEndDate());
 				updatedCoupon.setAmount(coupon.getAmount());
@@ -98,8 +103,8 @@ public class CompanyFacade implements CouponClientFacade {
 			} else {
 				throw new FacadeException("can update only End_Date and Price");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("update Coupon failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("update Coupon failed "+ e.getMessage());
 		}
 	}
 
@@ -109,15 +114,15 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @return The Coupon in the DB
 	 * @throws CouponSystemException
 	 */
-	public Coupon getCoupon(Coupon coupon) throws CouponSystemException {
+	public Coupon getCoupon(long coupon_id) throws CouponSystemException {
 		try {
-			if (couponDaoDB.couponExistById(coupon)) {
-				return couponDaoDB.getCoupon(coupon.getId());
+			if (couponDaoDB.couponExistById(coupon_id)) {
+				return couponDaoDB.getCoupon(coupon_id);
 			} else {
-				throw new FacadeException("coupon_id: " + coupon.getId() + ", Can not be pulled from the DB");
+				throw new FacadeException("coupon_id: " + coupon_id + ", Can not be pulled from the DB");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get Coupon failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get Coupon failed "+ e.getMessage());
 		}
 	}
 
@@ -134,8 +139,8 @@ public class CompanyFacade implements CouponClientFacade {
 			} else {
 				throw new FacadeException("Company Id: " + company_id + ", Can not be pulled from the DB");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get Company failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get Company failed "+ e.getMessage());
 		}
 
 	}
@@ -153,8 +158,8 @@ public class CompanyFacade implements CouponClientFacade {
 			} else {
 				throw new FacadeException("There aren't any Coupons");
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get All Coupons failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get All Coupons failed "+ e.getMessage());
 		}
 	}
 
@@ -165,17 +170,18 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @return Coupon Collection of all found Coupons in the DB
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getCompanyCouponByType(Company company, coupontype couponType)
+	public Collection<Coupon> getCouponByType(coupontype couponType)
 			throws CouponSystemException {
-		Collection<Coupon> CouponsByType = couponDaoDB.getCompanyCouponByType(company, couponType);
+		Collection<Coupon> CouponsByType = couponDaoDB.getCompanyCouponByType( //company, 
+				couponType);
 		try {
 			if (CouponsByType != null) {
 				return CouponsByType;
 			} else {
 				throw new FacadeException("There aren't any Coupons by couponType: " + couponType);
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get All Coupons by type failed", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get All Coupons by type failed "+ e.getMessage());
 		}
 	}
 
@@ -186,7 +192,7 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @return Coupon Collection of all found Coupons in the DB
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getCompanyCouponByPrice(Company company, double price) throws CouponSystemException {
+	public Collection<Coupon> getCouponByPrice(double price) throws CouponSystemException {
 		Collection<Coupon> CouponsByPrice = couponDaoDB.getCompanyCouponByPrice(company, price);
 		try {
 			if (CouponsByPrice != null) {
@@ -195,8 +201,8 @@ public class CompanyFacade implements CouponClientFacade {
 				throw new FacadeException("There aren't any Coupons ,less or equal to price: " + price
 						+ ", for this Company: " + company.getId());
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get All Coupons by price per Company failed ", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get All Coupons by price per Company failed "+ e.getMessage());
 		}
 	}
 
@@ -207,7 +213,7 @@ public class CompanyFacade implements CouponClientFacade {
 	 * @return Coupon Collection of all found Coupons in the DB
 	 * @throws CouponSystemException
 	 */
-	public Collection<Coupon> getCompanyCouponByEndDate(Company company, Date EndDate) throws CouponSystemException {
+	public Collection<Coupon> getCouponByEndDate(Date EndDate) throws CouponSystemException {
 		Collection<Coupon> CouponsByEndDate = couponDaoDB.getCompanyCouponByEndDate(company, EndDate);
 		try {
 			if (CouponsByEndDate != null) {
@@ -215,9 +221,13 @@ public class CompanyFacade implements CouponClientFacade {
 			} else {
 				throw new FacadeException("There aren't any Coupons by End Date: " + EndDate);
 			}
-		} catch (CouponSystemException e) {
-			throw new FacadeException("get All Coupons by End Date failed ", e);
+		} catch (FacadeException e) {
+			throw new FacadeException("get All Coupons by End Date failed "+ e.getMessage());
 		}
 	}
+
+
+
+
 
 }

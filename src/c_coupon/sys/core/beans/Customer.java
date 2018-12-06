@@ -1,6 +1,10 @@
 package c_coupon.sys.core.beans;
 
 import java.util.ArrayList;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 /**
  * <h1>Customer class creates a new Customer entity </h1>
  * <p>
@@ -11,12 +15,17 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 2018-09-06
  */
+@XmlRootElement
 public class Customer {
 	private long id;
 	private String custName;
 	private String password;
 	private ArrayList<Coupon> coupons = null;
 
+	@JsonCreator
+	public Customer() {
+		super();
+	}
 	/**
 	 * This constructor create a new Customer entity using 2 parameters. 
 	 * <p><b>Not setting the id parameter</b1>.

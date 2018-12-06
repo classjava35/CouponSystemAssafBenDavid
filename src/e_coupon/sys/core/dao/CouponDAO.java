@@ -84,6 +84,7 @@ public interface CouponDAO {
 	 * @return a Collection of Coupons
 	 * @throws CouponSystemException
 	 */
-	Collection<Coupon> getCompanyCouponByType(Company company, coupontype coupontype) throws CouponSystemException;
+	Collection<Coupon> getCompanyCouponByType(//Company company,
+			coupontype coupontype) throws CouponSystemException;
 	
 }

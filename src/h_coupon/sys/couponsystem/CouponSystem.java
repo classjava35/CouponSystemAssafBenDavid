@@ -1,6 +1,12 @@
 package h_coupon.sys.couponsystem;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import d_coupon.sys.core.connection.ConnectionPool;
+import f_coupon.sys.core.dao.db.CompanyDaoDB;
+import f_coupon.sys.core.dao.db.CouponDaoDB;
+import f_coupon.sys.core.dao.db.CustomerDaoDB;
 import g_coupon.sys.core.facade.AdminFacade;
 import g_coupon.sys.core.facade.CompanyFacade;
 import g_coupon.sys.core.facade.CouponClientFacade;
@@ -10,43 +16,43 @@ import j_daily.thread.DailyCouponExpirationTask;
 
 /**
  * Singleton makes of the core Java Application into one Java file
+ * 
  * @author Assaf Ben David
  * @version 1.0
  * @since 2018-09-06
  */
 public class CouponSystem {
 
+	private CouponClientFacade clientFacade;
+	public CompanyDaoDB companyDao;
+	public CustomerDaoDB customerDao;
+	public CouponDaoDB couponDao;
+	private ConnectionPool connectionPool;
+	private DailyCouponExpirationTask dailyCouponExpirationTask;
 	private static CouponSystem instance;
 
-	private AdminFacade adminFacade;
-	private CompanyFacade companyFacade;
-	private CustomerFacade customerFacade;
-	private DailyCouponExpirationTask dailyTask;
 	CouponClientFacade clientType = null;
 
 	/**
-	 * Private Constructor for the Singleton entity CouponSystem, initializing the
-	 * AdminFacade, CompanyFacade,CustomerFacade,DailyCouponExpirationTask.
+	 * Private Constructor for the Singleton entity CouponSystem, initializing
+	 * the AdminFacade, CompanyFacade,CustomerFacade,DailyCouponExpirationTask.
 	 */
-	private CouponSystem() {
+	public CouponSystem() {
 		super();
-		this.adminFacade = new AdminFacade();
-		this.companyFacade = new CompanyFacade();
-		this.customerFacade = new CustomerFacade();
-		this.dailyTask = new DailyCouponExpirationTask();
+		// this.dailyTask = new DailyCouponExpirationTask();
+		companyDao = new CompanyDaoDB();
+		customerDao = new CustomerDaoDB();
+		couponDao = new CouponDaoDB();
 	}
 
 	/**
-	 * Private Constructor for the Singleton entity CouponSystem, initializing the
-	 * clientType.
+	 * Private Constructor for the Singleton entity CouponSystem, initializing
+	 * the clientType.
 	 * 
 	 * @param clientType
 	 *            from the interface CouponClientFacade.
 	 */
-	private CouponSystem(CouponClientFacade clientType) {
-		super();
-		this.clientType = clientType;
-	}
+
 
 	/**
 	 * getInstance method return instance of the Singleton entity CouponSystem
@@ -62,8 +68,8 @@ public class CouponSystem {
 	}
 
 	/**
-	 * login method check if the entered parameters match, then return accordingly
-	 * the right CouponClientFacade type.
+	 * login method check if the entered parameters match, then return
+	 * accordingly the right CouponClientFacade type.
 	 * 
 	 * @param name
 	 *            entered name
@@ -73,29 +79,49 @@ public class CouponSystem {
 	 *            entered clientType from interface CouponClientFacade
 	 * @return
 	 */
-	public CouponClientFacade login(String name, String password, String clientType) {
-		CouponClientFacade Type = null;
-		if ((name.equals("admin")) && (password.equals("1234"))) {
-			switch (clientType) {
-			case "admin":
-				Type = new AdminFacade();
-				break;
-			case "company":
-				Type = new CompanyFacade();
-				break;
-			case "customer":
-				Type = new CustomerFacade();
-				break;
-			default:
-				Type = null;
-				break;
-			}
-			System.out.println("You have managed to successfuly login as : " + Type.getClass().getSimpleName());
-			return Type;
-		}
-		return null;
+	public CouponClientFacade login(String name, String password, String clientType) throws CouponSystemException {
 
+		try {
+			// in case the administrator id performing the login
+			if (clientType.equals("admin") && name.equals("admin") && password.equals("1234")) {
+				clientFacade = new AdminFacade(this.companyDao, this.customerDao);
+			} else if (clientType.equals("customer") && customerDao.login(name, password)) {
+				clientFacade = new CustomerFacade(couponDao, customerDao, customerDao.getCustomer(name));
+			} else if (clientType.equals("company") && companyDao.login(name, password)) {
+				clientFacade = new CompanyFacade(couponDao, companyDao, companyDao.getCompany(name));
+			} else {
+				return null;
+//				throw new CouponSystemException("Wrong user name: "+name+" or password: ****** please try again");
+			}
+		} catch (CouponSystemException e) {
+//			throw new CouponSystemException("Cannot login to Coupon System :" + e.getMessage());
+			return null;
+		}
+		return clientFacade;
 	}
+
+//	CouponClientFacade Type = null;
+//	if((name.equals("admin"))&&(password.equals("1234")))
+//	{
+//			switch (clientType) {
+//			case "admin":
+//				Type = new AdminFacade();
+//				break;
+//			case "company":
+//				Type = new CompanyFacade(companyDao.login(compName, password))));
+//				break;
+//			case "customer":
+//				Type = new CustomerFacade();
+//				break;
+//			default:
+//				Type = null;
+//				break;
+//			}
+//			System.out.println("You have managed to successfuly login as : " + Type.getClass().getSimpleName());
+//			return Type;
+//		}return null;
+//
+//	}
 
 	/**
 	 * Shutdown method close all connection to the Connection pool 

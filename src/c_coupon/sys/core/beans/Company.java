@@ -2,6 +2,10 @@ package c_coupon.sys.core.beans;
 
 import java.util.ArrayList;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * <h1>Company class creates a new Company entity </h1>
  * <p>
@@ -12,6 +16,7 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 2018-09-06
  */
+@XmlRootElement
 public class Company {
 	private long id;
 	private String compName;
@@ -19,6 +24,11 @@ public class Company {
 	private String email;
 	private ArrayList<Coupon> coupons = null;
 
+	@JsonCreator
+	public Company() {
+		super();
+	}
+	
 	/**
 	 * This constructor create a new Company entity using 3 String parameters -
 	 * Company Name, password, email. <b>Not setting the id parameter</b1>.
@@ -30,6 +40,7 @@ public class Company {
 	 * @param email
 	 *            The Company email
 	 */
+	
 	public Company(String compName, String password, String email) {// , ArrayList<Coupon> coupons) {
 		super();
 		this.compName = compName;

@@ -57,22 +57,22 @@ public class d_Test_CompanyFacade {
 			Coupon coup4 = new Coupon("Title coup1" + rand + 3, startDate, endDate, 34, coupontype.CAMPING, "message",
 					11, "Image");
 
-			AdminFacade admFac = new AdminFacade();
-			CompanyFacade compFac = new CompanyFacade();
+			AdminFacade admFac = new AdminFacade(null, null);
+			CompanyFacade compFac = new CompanyFacade(null, null, company1);
 
 			admFac.createCompany(company1);
-			compFac.createCoupon(company1, coup1);
-			compFac.createCoupon(company1, coup2);
-			compFac.createCoupon(company1, coup3);
-			compFac.createCoupon(company1, coup4);
+			compFac.createCoupon( coup1);
+			compFac.createCoupon( coup2);
+			compFac.createCoupon( coup3);
+			compFac.createCoupon( coup4);
 
 			coup1.setEndDatePlusDays(coup1.getEndDate(), 10);
 			compFac.updateCoupon(coup1);
 			compFac.getCompany(company1.getId());
 			compFac.getAllCoupons();
-			compFac.getCompanyCouponByType(company1, coup1.getType());
-			compFac.getCompanyCouponByPrice(company1, 32.4);
-			compFac.getCompanyCouponByEndDate(company1, coup2.getEndDate());
+			compFac.getCouponByType( coup1.getType());
+			compFac.getCouponByPrice( 32.4);
+			compFac.getCouponByEndDate(coup2.getEndDate());
 
 		} catch (CouponSystemException e) {
 			e.printStackTrace();

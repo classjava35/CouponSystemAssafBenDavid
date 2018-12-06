@@ -62,20 +62,20 @@ public class e_Test_CustomerFacade {
 			Coupon coup4 = new Coupon("Title coup1" + rand + 3, startDate, endDate, 34, coupontype.CAMPING, "message",
 					11, "Image");
 
-			AdminFacade admFac = new AdminFacade();
-			CompanyFacade compFac = new CompanyFacade();
+			AdminFacade admFac = new AdminFacade(null, null);
+			CompanyFacade compFac = new CompanyFacade(null, null, company1);
 
 			admFac.createCompany(company1);
-			compFac.createCoupon(company1, coup1);
-			compFac.createCoupon(company1, coup2);
-			compFac.createCoupon(company1, coup3);
-			compFac.createCoupon(company1, coup4);
+			compFac.createCoupon(coup1);
+			compFac.createCoupon( coup2);
+			compFac.createCoupon( coup3);
+			compFac.createCoupon( coup4);
 
 			compFac.getCompany(company1.getId());
 			compFac.getAllCoupons();
-			compFac.getCompanyCouponByType(company1, coup1.getType());
-			compFac.getCompanyCouponByPrice(company1, 32.4);
-			compFac.getCompanyCouponByEndDate(company1, coup2.getEndDate());
+			compFac.getCouponByType( coup1.getType());
+			compFac.getCouponByPrice( 32.4);
+			compFac.getCouponByEndDate( coup2.getEndDate());
 
 			/**************************************************
 			 **** Customer Facade - create , update , get ,get All ****
@@ -86,13 +86,13 @@ public class e_Test_CustomerFacade {
 
 			Customer customer1 = new Customer("Customer_Name" + rand, "Password");
 			admFac.createCustomer(customer1);
-			CustomerFacade custFac = new CustomerFacade();
-			custFac.purchaseCoupon(customer1, coup3);
-			custFac.purchaseCoupon(customer1, coup2);
+			CustomerFacade custFac = new CustomerFacade(null, null, customer1);
+			custFac.purchaseCoupon( coup3);
+			custFac.purchaseCoupon( coup2);
 
-			custFac.getAllPurchasedCoupons(customer1);
-			custFac.getAllPurchasedCouponsByType(customer1, coupontype.ELECTRICITY);
-			custFac.getAllPurchasedCouponsByPrice(customer1, 32.4);
+			custFac.getAllPurchasedCoupons();
+			custFac.getAllPurchasedCouponsByType( coupontype.ELECTRICITY);
+			custFac.getAllPurchasedCouponsByPrice( 32.4);
 
 			coup2.setEndDatePlusDays(coup2.getEndDate(), -100);// update End Date 100 days back for testing Daily Thread
 			compFac.updateCoupon(coup2);

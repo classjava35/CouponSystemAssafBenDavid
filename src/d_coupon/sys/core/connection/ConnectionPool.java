@@ -3,10 +3,8 @@ package d_coupon.sys.core.connection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import i_couponSystemException.ConnctionPoolException;
@@ -33,6 +31,7 @@ public class ConnectionPool {
 	private static ConnectionPool instance;
 
 	private String url = "jdbc:derby://localhost:1527/cs";
+//	private String url = "jdbc:postgresql://localhost:5432/cs?user=admin & password=admin";
 
 	// 1. private CTOR
 	/**

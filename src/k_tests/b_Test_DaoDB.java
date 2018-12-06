@@ -93,9 +93,9 @@ public class b_Test_DaoDB {
 			coupDb.getCoupon(MaxCouponID);
 			coupDb.getAllCoupons();
 
-			coupDb.getCompanyCouponByType(company1, coupontype.ELECTRICITY);
-			coupDb.getCompanyCouponByType(company1, coupontype.RESTAURANTS);
-			coupDb.getCompanyCouponByType(company1, coupontype.SPORTS);
+			coupDb.getCompanyCouponByType(coupontype.ELECTRICITY);
+			coupDb.getCompanyCouponByType(coupontype.RESTAURANTS);
+			coupDb.getCompanyCouponByType(coupontype.SPORTS);
 
 			/**************************************************
 			 **** Customer DB - create , update , get ,get All ****

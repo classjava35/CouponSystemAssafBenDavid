@@ -234,14 +234,16 @@ public class CouponDaoDB implements CouponDAO {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Coupon> getCompanyCouponByType(Company company, coupontype coupontype)
+	public Collection<Coupon> getCompanyCouponByType( //Company company, 
+			coupontype coupontype)
 			throws CouponSystemException {
 		Collection<Coupon> list = new ArrayList<>();
 		Coupon tempCupn = null;
-		long company_id = company.getId();
+	//	long company_id = company.getId();
 		Connection con = ConnectionPool.getInstance().getConnection();
-		String sql = "select c.* from coupon c where coupon_id in (SELECT c.coupon_id FROM COUPON c join company_coupon cc on c.coupon_id = cc.coupon_id where company_id= "
-				+ company_id + " ) and ENUMTYPE = '" + coupontype.name() + "'";
+	//	String sql = "select c.* from coupon c where coupon_id in (SELECT c.coupon_id FROM COUPON c join company_coupon cc on c.coupon_id = cc.coupon_id where company_id= "
+	//			+ company_id + " ) and ENUMTYPE = '" + coupontype.name() + "'";
+		String sql = "select * from coupon c where ENUMTYPE = '" + coupontype.name() + "'";
 
 		try (Statement stmt = con.createStatement();) {
 
@@ -267,13 +269,13 @@ public class CouponDaoDB implements CouponDAO {
 					list.add(tempCupn);
 				} while (rs.next());
 			}
-			System.out.println("Get All Coupons per company: " + company_id + " by type: " + coupontype
+			System.out.println("Get All Coupons per company by type: " + coupontype
 					+ " from DB was successful , found : " + list.size());
 			System.out.println(list);
 			return list;
 		} catch (SQLException e) {
 			throw new DAOException(
-					" Get All coupons per company: " + company_id + " by type: " + coupontype + " from DB failed ", e);
+					" Get All coupons per company: by type: " + coupontype + " from DB failed ", e);
 		} finally {
 			ConnectionPool.getInstance().returnConnection(con);
 		}
@@ -300,8 +302,8 @@ public class CouponDaoDB implements CouponDAO {
 		Coupon tempCupn = null;
 		long customer_id = customer.getId();
 		Connection con = ConnectionPool.getInstance().getConnection();
-		String sql = "select c.* from coupon c where coupon_id in (SELECT c.coupon_id FROM COUPON c join customer_coupon cc on c.coupon_id = cc.coupon_id where customer_id= "
-				+ customer_id + " ) and ENUMTYPE = '" + coupontype.name() + "'";
+		String sql = "select c.* from coupon c where c.ENUMTYPE = '" + coupontype.name() + "' and coupon_id in (SELECT c.coupon_id FROM COUPON c join customer_coupon cc on c.coupon_id = cc.coupon_id where customer_id= "
+				+ customer_id + " )";
 
 		try (Statement stmt = con.createStatement();) {
 
@@ -533,9 +535,9 @@ public class CouponDaoDB implements CouponDAO {
 	 * @return boolean true/false
 	 * @throws CouponSystemException
 	 */
-	public boolean couponExistById(Coupon coupon) throws CouponSystemException {
+	public boolean couponExistById(long coupon_id) throws CouponSystemException {
 		Connection con = ConnectionPool.getInstance().getConnection();
-		String sql = "select * from COUPON where coupon_Id =" + coupon.getId();
+		String sql = "select * from COUPON where coupon_Id =" + coupon_id;
 		try (Statement stmt = con.createStatement();) {
 
 			ResultSet rs = stmt.executeQuery(sql);
@@ -543,11 +545,11 @@ public class CouponDaoDB implements CouponDAO {
 			if (rs.next() == false) {
 				return false;
 			} else {
-				System.out.println("Check Coupon By Id from DB was successful , Company_Id : " + coupon.getId());
+				System.out.println("Check Coupon By Id from DB was successful , Company_Id : " + coupon_id);
 				return true;
 			}
 		} catch (SQLException e) {
-			throw new DAOException(" Get Coupon from DB failed " + coupon.getId(), e);
+			throw new DAOException(" Get Coupon from DB failed " + coupon_id, e);
 		} finally {
 			ConnectionPool.getInstance().returnConnection(con);
 		}

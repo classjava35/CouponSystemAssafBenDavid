@@ -51,13 +51,13 @@ public class h_Test_Company_Singleton_CouponSystem {
 					"message", 11, "Image");
 			Coupon coup3 = new Coupon("Title coup1" + rand + 2, startDate, endDate, 34, coupontype.SPORTS, "message",
 					11, "Image");
-			companyFacade.createCoupon(comp1, coup1);
-			companyFacade.createCoupon(comp1, coup2);
+			companyFacade.createCoupon( coup1);
+			companyFacade.createCoupon( coup2);
 			companyFacade.getAllCoupons();
 			companyFacade.getCompany(comp1.getId());
-			companyFacade.getCompanyCouponByEndDate(comp1, coup2.getEndDate());
-			companyFacade.getCompanyCouponByPrice(comp1, 34);
-			companyFacade.getCoupon(coup2);
+			companyFacade.getCouponByEndDate( coup2.getEndDate());
+			companyFacade.getCouponByPrice( 34);
+			companyFacade.getCoupon(coup2.getId());
 			coup2.setTitle("New Title" + rand);
 			coup2.setAmount(6666);
 			coup2.setMessage("New message");

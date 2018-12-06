@@ -1,14 +1,12 @@
 package f_coupon.sys.core.dao.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 
 import c_coupon.sys.core.beans.Coupon;
@@ -182,6 +180,32 @@ public class CustomerDaoDB implements CustomerDAO {
 		}
 	}
 
+	public Customer getCustomer(String customer_name) throws CouponSystemException{
+		Customer tempCust = null;
+		Connection con = ConnectionPool.getInstance().getConnection();
+		String sql = "select * from customer where cust_name ='" + customer_name+"'";
+		try (Statement stmt = con.createStatement();) {
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			if (rs.next() == false) {
+				return null;
+			} else {
+
+				long id = rs.getLong("customer_id");
+				String name = rs.getString("cust_name");
+				String password = rs.getString("Password");
+
+				tempCust = new Customer(id, name, password);
+			}
+			System.out.println("Get Customer from DB was successful , customer : " + tempCust);
+			return tempCust;
+		} catch (SQLException e) {
+			throw new DAOException(" Get Customer from DB failed " + customer_name, e);
+		} finally {
+			ConnectionPool.getInstance().returnConnection(con);
+		}
+	}
 	/**
 	 * {@inheritDoc}
 	 */
@@ -255,6 +279,42 @@ public class CustomerDaoDB implements CustomerDAO {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Collection<Coupon> getAllCustomerUnPurchasedCoupons(Customer customer) throws CouponSystemException {
+		long customer_id = customer.getId();
+		Collection<Coupon> couponList = new ArrayList<>();
+		Connection con = ConnectionPool.getInstance().getConnection();
+		String sql = "select c.* from coupon c where coupon_id not in (SELECT c.coupon_id FROM COUPON c join customer_coupon cc on c.coupon_id = cc.coupon_id where customer_id="
+				+ customer_id + ")";
+
+		try (Statement stmt = con.createStatement();) {
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			if (rs.next() == false) {
+				return null;
+			} else {
+
+				// loop through the result set
+				do {
+
+					couponList.add(new Coupon(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+							rs.getInt(5), coupontype.valueOf(rs.getString(6)), rs.getString(7), rs.getDouble(8),
+							rs.getString(9)));
+				} while (rs.next());
+			}
+			System.out.println("Get All Coupons from DB was successful ");
+			return couponList;
+		} catch (SQLException e) {
+			throw new DAOException(" Get All Coupons failed ", e);
+		} finally {
+			ConnectionPool.getInstance().returnConnection(con);
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -393,5 +453,7 @@ public class CustomerDaoDB implements CustomerDAO {
 			ConnectionPool.getInstance().returnConnection(con);
 		}
 	}
+
+
 
 }

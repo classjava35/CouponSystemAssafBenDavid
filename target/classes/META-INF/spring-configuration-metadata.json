@@ -1,0 +1,12 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "c_coupon.sys.core.beans.DatabaseConfig",
+      "name": "spring.datasource",
+      "sourceMethod": "public javax.sql.DataSource dataSource() ",
+      "type": "javax.sql.DataSource"
+    }
+  ],
+  "properties": []
+}

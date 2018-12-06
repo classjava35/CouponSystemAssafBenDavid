@@ -1,6 +1,5 @@
 package e_coupon.sys.core.dao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import c_coupon.sys.core.beans.Coupon;
@@ -92,5 +91,8 @@ public interface CustomerDAO {
 	 * @throws CouponSystemException
 	 */
 	boolean login(String custName, String password) throws CouponSystemException;
+
+
+	Collection<Coupon> getAllCustomerUnPurchasedCoupons(Customer customer) throws CouponSystemException;
 	
 }

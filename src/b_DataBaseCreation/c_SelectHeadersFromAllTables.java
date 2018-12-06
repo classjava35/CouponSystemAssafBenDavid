@@ -35,6 +35,8 @@ public class c_SelectHeadersFromAllTables {
 	 */
 	public static void main(String[] args) throws ParseException {
 		String url = "jdbc:derby://localhost:1527/cs";
+//		String url = "jdbc:postgresql://localhost:5432/cs;create=true";
+
 		//Select SQL query for all tables 
 		List<String> sqlList = new ArrayList<String>();
 		String sql1 = "SELECT * from COMPANY";

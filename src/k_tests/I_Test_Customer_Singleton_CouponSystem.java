@@ -52,16 +52,16 @@ public class I_Test_Customer_Singleton_CouponSystem {
 					"message", 11, "Image");
 			Coupon coup3 = new Coupon("Title coup1" + rand + 2, startDate, endDate, 34, coupontype.SPORTS, "message",
 					11, "Image");
-			companyFacade.createCoupon(comp1, coup1);
-			companyFacade.createCoupon(comp1, coup2);
+			companyFacade.createCoupon( coup1);
+			companyFacade.createCoupon( coup2);
 
 			customerFacade = (CustomerFacade) CouponSystem.getInstance().login("admin", "1234", "customer");
 
-			customerFacade.purchaseCoupon(cust1, coup1);
-			customerFacade.purchaseCoupon(cust1, coup2);
-			customerFacade.getAllPurchasedCoupons(cust1);
-			customerFacade.getAllPurchasedCouponsByPrice(cust1, 23);
-			customerFacade.getAllPurchasedCouponsByType(cust1, coupontype.ELECTRICITY);
+			customerFacade.purchaseCoupon( coup1);
+			customerFacade.purchaseCoupon( coup2);
+			customerFacade.getAllPurchasedCoupons();
+			customerFacade.getAllPurchasedCouponsByPrice( 23);
+			customerFacade.getAllPurchasedCouponsByType( coupontype.ELECTRICITY);
 		} catch (CouponSystemException e) {
 			throw new CouponSystemException("Cannot create new CouponSystem", e);
 		}
