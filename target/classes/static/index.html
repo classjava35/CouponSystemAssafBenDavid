@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="UTF-8">
+<link rel="icon" href="images/favicon.ico?v=2">
+  <link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
+  <title>LoginCoupon System</title>
+  
+  
+  
+  <link rel='stylesheet' href='//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css'>
+
+      <style>
+      
+
+      
+      body {
+  background: //#eee !important;
+}
+
+.wrapper {
+  margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.form-signin {
+  background: #fff !important;
+  max-width: 380px;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  border: //1px solid rgba(0, 0, 0, 0.1);
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 30px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 20px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+    </style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }function myFunction() {
+	    var x = document.getElementById("myInput");
+	    if (x.type === "password") {
+	        x.type = "text";
+	    } else {
+	        x.type = "password";
+	    }
+	}
+  
+  
+</script>
+
+<script type="text/javascript">
+var login_failed = false;  /* set this to true if the login was a success */
+
+if(login_failed == true)
+{
+    document.getElementById("login_failed").innerHTML = "Login Failed.";
+}
+else
+{
+    document.getElementById("login_failed").innerHTML = "";
+}
+
+</script>
+
+</head>
+<body>
+
+  <div class="wrapper">      
+      	<form action="http://localhost:8080/login" method="GET" class="form-signin">	
+<label>
+      	<img src="images/favicon.ico" alt="Italian Trulli" height="42" width="42" >
+      	</label>
+     	   <h2 class="form-signin-heading" align="center">Coupon System</h2>
+     	   <span id="login_failed" "color="red"></span>
+     	   <input type="text" class="form-control" name="name" placeholder="User Name" required="" autofocus="" />
+   		   <div>
+   		   <br>
+   		   <input type="password" class="form-control" name="pwd" id="myInput" placeholder="Password" required=""/> 
+  			  </div>
+  			<label class="checkbox">
+   		   <input type="checkbox" value="showPassword" id="showPassword" name="showPassword" onclick="myFunction()">Show Password 
+   		   </label>
+  
+   	<label>	 
+  <input class=input type="radio" name="usertype" value="admin" checked> Administrator<br></label>
+  &nbsp;
+  <label>	 
+  <input class=input type="radio" name="usertype" value="company"> Company<br></label>
+  &nbsp;
+  <label>	 
+  <input class=input type="radio" name="usertype" value="customer"> Customer<br></label><br>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>   
+    </form>
+    
+  </div>
+
+</body>
+</html>

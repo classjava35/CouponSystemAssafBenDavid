@@ -6,6 +6,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" output="Users/assafbd/git/CouponSystemAssafBenDavid/bin" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="tests"/>
 	<classpathentry exported="true" kind="lib" path="C:/db/lib/derbyclient.jar"/>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>

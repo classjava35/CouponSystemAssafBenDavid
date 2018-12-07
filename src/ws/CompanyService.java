@@ -109,7 +109,7 @@ public class CompanyService {
 	 *             - the exception that was thrown from the Admin Facade
 	 */
 	@RequestMapping(value = "/companyservice/removecoupon/{coupon_id}", method = RequestMethod.DELETE)
-	public String removeCompany(@PathVariable("coupon_id") long coupon_id) throws CouponSystemException {
+	public String removeCoupon(@PathVariable("coupon_id") long coupon_id) throws CouponSystemException {
 		CompanyFacade companyFacade = (CompanyFacade) this.getAdminFacade();
 		try {
 			companyFacade.removeCoupon(getCoupon(coupon_id));
@@ -131,7 +131,7 @@ public class CompanyService {
 	 */
 	@RequestMapping(value = "/companyservice/updatecoupon/{coupon_id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE
 			+ ";charset=utf-8")
-	public String updateCompany(@PathVariable("coupon_id") long comp_id, @RequestBody Coupon coupon)
+	public String updateCoupon(@PathVariable("coupon_id") long comp_id, @RequestBody Coupon coupon)
 			throws CouponSystemException {
 		CompanyFacade companyFacade = (CompanyFacade) this.getAdminFacade();
 		try {

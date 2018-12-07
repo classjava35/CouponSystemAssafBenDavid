@@ -158,6 +158,29 @@ public class CustomerFacade implements CouponClientFacade {
 		}
 	}
 
+	public void updateCoupon(Coupon coupon) throws CouponSystemException {
+		Coupon updatedCoupon;
+		try {
+			if (couponDaoDB.couponExistById(coupon.getId())) {
+				updatedCoupon = couponDaoDB.getCoupon(coupon.getId());
+			//	updatedCoupon.setTitle(coupon.getTitle());
+				updatedCoupon.setStartDate(coupon.getStartDate());
+				updatedCoupon.setEndDate(coupon.getEndDate());
+				updatedCoupon.setAmount(coupon.getAmount());
+				updatedCoupon.setType(coupon.getType());
+				updatedCoupon.setMessage(coupon.getMessage());
+				updatedCoupon.setPrice(coupon.getPrice());
+				updatedCoupon.setImage(coupon.getImage());
+				couponDaoDB.updateCoupon(updatedCoupon);
+
+			} else {
+				throw new FacadeException("can update only End_Date and Price");
+			}
+		} catch (FacadeException e) {
+			throw new FacadeException("update Coupon failed "+ e.getMessage());
+		}
+	}
+
 
 
 }

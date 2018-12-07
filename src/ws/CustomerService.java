@@ -25,6 +25,7 @@ import g_coupon.sys.core.facade.CustomerFacade;
 import h_coupon.sys.couponsystem.CouponSystem;
 import i_couponSystemException.CouponSystemException;
 import i_couponSystemException.FacadeException;
+import ws.exceptions.CompanyNotFoundException;
 import ws.exceptions.CouponNotFoundException;
 import ws.exceptions.CustomerAlreadyExistException;
 import ws.exceptions.CustomerNotFoundException;
@@ -99,6 +100,29 @@ public class CustomerService {
 		return coupon;
 	}
 
+	/**
+	 * This web service activates the update company method at the Admin Facade
+	 * class. The method updates a company in the DB
+	 * 
+	 * @param company
+	 *            - the company to be updated (sent from the client side via
+	 *            JSON Object)
+	 * @throws CouponSystemException
+	 *             - the exception that was thrown from the Admin Facade
+	 */
+	@RequestMapping(value = "/customerservice/updatecoupon/{coupon_id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE
+			+ ";charset=utf-8")
+	public String updateCoupon(@PathVariable("coupon_id") long comp_id, @RequestBody Coupon coupon)
+			throws CouponSystemException {
+		CustomerFacade customerFacade = (CustomerFacade) this.getAdminFacade();
+		try {
+			customerFacade.updateCoupon(coupon);
+		} catch (FacadeException e) {
+			throw new CompanyNotFoundException(e);
+		}
+		return "Coupon " + coupon.getId() + " updated successsfully";
+	}
+	
 	/**
 	 * This web service activates the get all companies method at the Admin
 	 * Facade class. The method returns all the companies in the DB
