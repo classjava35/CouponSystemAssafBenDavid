@@ -87,6 +87,27 @@ public class CustomerFacade implements CouponClientFacade {
 	 * @return Coupon Collection of Purchased Coupons.
 	 * @throws CouponSystemException
 	 */
+	public Collection<Coupon> getAllExipiredCoupons() throws CouponSystemException {
+		Collection<Coupon> expiriedCoupons = custDaoDB.getAllExpiriedCoupons();
+		try {
+			if (custDaoDB.customerExistByName(customer.getCustName())) {
+				System.out.println(expiriedCoupons);
+				return expiriedCoupons;
+			} else {
+				throw new FacadeException(
+						"customer_name doesn't exist in DB,  customer_name: " + customer.getCustName());
+			}
+		} catch (CouponSystemException e) {
+			throw new FacadeException("get All Exipired Coupons failed", e);
+		}
+	}
+	
+	/**
+	 * getAllPurchasedCoupons method return all Purchased Coupons by this Customer. 
+	 * @param customer The Customer from the Java Bean.
+	 * @return Coupon Collection of Purchased Coupons.
+	 * @throws CouponSystemException
+	 */
 	public Collection<Coupon> getAllUnPurchasedCoupons() throws CouponSystemException {
 		Collection<Coupon> unPurchasedCoupons = custDaoDB.getAllCustomerUnPurchasedCoupons(customer);
 		try {

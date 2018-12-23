@@ -1,6 +1,7 @@
 package f_coupon.sys.core.dao.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -279,6 +280,36 @@ public class CustomerDaoDB implements CustomerDAO {
 		}
 	}
 
+	public Collection<Coupon> getAllExpiriedCoupons() throws CouponSystemException {
+		Date today = new Date(System.currentTimeMillis());		
+		Collection<Coupon> couponList = new ArrayList<>();
+		Connection con = ConnectionPool.getInstance().getConnection();
+		String sql = "select * from COUPON where End_Date < '" + today + "'";
+
+		try (Statement stmt = con.createStatement();) {
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			if (rs.next() == false) {
+				return null;
+			} else {
+
+				// loop through the result set
+				do {
+
+					couponList.add(new Coupon(rs.getLong(1), rs.getString(2), rs.getDate(3), rs.getDate(4),
+							rs.getInt(5), coupontype.valueOf(rs.getString(6)), rs.getString(7), rs.getDouble(8),
+							rs.getString(9)));
+				} while (rs.next());
+			}
+			System.out.println("Get All Expiried Coupons from DB was successful ");
+			return couponList;
+		} catch (SQLException e) {
+			throw new DAOException(" Get All Expiried Coupons failed ", e);
+		} finally {
+			ConnectionPool.getInstance().returnConnection(con);
+		}
+	}
 	/**
 	 * {@inheritDoc}
 	 */

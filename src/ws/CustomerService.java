@@ -39,15 +39,15 @@ public class CustomerService {
 
 	private CouponClientFacade getAdminFacade() throws CouponSystemException {
 		CouponSystem couponSystem = CouponSystem.getInstance();
-//		HttpSession session = request.getSession(false);
-//		if (null == session.getAttribute("JSESSIONID")) {
+		HttpSession session = request.getSession(false);
+		if (null == session.getAttribute("JSESSIONID")) {
 			try {
 				return couponSystem.login("Customer_Name", "Password", "customer");
 			} catch (CouponSystemException ex) {
 				throw new CouponSystemException(ex);
 			}
-//		}
-//		return null;
+		}
+		return null;
 	}
 
 	@RequestMapping(value = "/customerservice/logout", method = RequestMethod.POST)
@@ -143,6 +143,26 @@ public class CustomerService {
 		return customerFacade.getAllPurchasedCoupons();
 	}
 
+	/**
+	 * This web service activates the get all companies method at the Admin
+	 * Facade class. The method returns all the companies in the DB
+	 * 
+	 * @return - return all the companies in the DB
+	 * @throws CouponSystemException
+	 *             - the exception that was thrown from the Admin Facade
+	 */
+	@RequestMapping(value = "/customerservice/getallexpiriedcoupons", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE
+			+ ";charset=utf-8")
+	public Collection<Coupon> getAllExpiredCoupons() throws CouponSystemException {
+		CustomerFacade customerFacade = (CustomerFacade) this.getAdminFacade();
+		try {
+			customerFacade.getAllExipiredCoupons();
+		} catch (FacadeException ex) {
+			throw new CustomerNotFoundException(ex);
+		}
+		return customerFacade.getAllExipiredCoupons();
+	}
+	
 	/**
 	 * This web service activates the get all companies method at the Admin
 	 * Facade class. The method returns all the companies in the DB
