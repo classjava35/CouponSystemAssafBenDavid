@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import c_coupon.sys.core.beans.Company;
 import c_coupon.sys.core.beans.Customer;
@@ -26,33 +24,66 @@ import g_coupon.sys.core.facade.CouponClientFacade;
 import h_coupon.sys.couponsystem.CouponSystem;
 import i_couponSystemException.CouponSystemException;
 import i_couponSystemException.FacadeException;
-import ws.exceptions.AccessDeniedException;
 import ws.exceptions.ComapnyAlreadyExistException;
-//import ws.exceptions.ComapnyAlreadyExistException;
 import ws.exceptions.CompanyNotFoundException;
 import ws.exceptions.CustomerAlreadyExistException;
 import ws.exceptions.CustomerNotFoundException;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+
 public class AdminService {
 
 	@Autowired
 	private HttpServletRequest request;
+	private HttpServletResponse response;
 
+	/**
+	 * This method checks if jsession cookie exist return CouponSystemFacade
+	 * else referring to login method that return New CouponSystemFacade
+	 * 
+	 * @return couponSystemFacade either the existing one , or the one returned
+	 *         from the Login method
+	 * @throws CouponSystemException
+	 *             in case login failed , invalidate existing cookie (logout
+	 *             method) and throw exception
+	 */
 	private CouponClientFacade getAdminFacade() throws CouponSystemException {
+		// Get instance of Coupon System Singleton
 		CouponSystem couponSystem = CouponSystem.getInstance();
+		// get current session ID
 		HttpSession session = request.getSession(false);
-		if (null == session.getAttribute("JSESSIONID")) {
+		// If session get Attribute(jsession cookie) is empty do Login
+		if (session.getAttribute("JSESSIONID") == null) {
 			try {
-				return couponSystem.login("admin", "1234", "admin");
+				// get name and password from session cookies
+				Cookie ck[] = request.getCookies();
+				if (ck != null) {
+					String Admin_Name = ck[1].getValue();
+					String password = ck[2].getValue();
+
+					// login using name and password from session cookies
+					return couponSystem.login(Admin_Name, password, "admin");
+				}
 			} catch (CouponSystemException ex) {
+				logout(request, response);
 				throw new CouponSystemException(ex);
 			}
 		}
-		return null;
+		// if there is jsession cookie return coupon system singleton ,no need
+		// to login
+		return (CouponClientFacade) couponSystem;
 	}
 
+	/**
+	 * This method invalidate the session and referring to handleLogOutResponse
+	 * method that reset the cookie
+	 * 
+	 * @param request
+	 *            get the session from the request and invalidate it
+	 * @param response
+	 *            pass response to method handleLogOutResponse that reset the
+	 *            cookie in session
+	 */
 	@RequestMapping(value = "/adminservice/logout", method = RequestMethod.POST)
 	public void logout(HttpServletRequest request, HttpServletResponse response) {
 		/* Getting session and then invalidating it */
@@ -69,6 +100,7 @@ public class AdminService {
 	 * would help to avoid same cookie ID each time a person logs in
 	 * 
 	 * @param response
+	 *            reset the cookie in the session
 	 */
 	private void handleLogOutResponse(HttpServletResponse response, HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
@@ -87,6 +119,7 @@ public class AdminService {
 	 * @param company
 	 *            - the company to be added to the DB (sent from the client side
 	 *            via JSON Object)
+	 * @return Company - The created Company with the created status
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
@@ -108,9 +141,10 @@ public class AdminService {
 	 * This web service activates the remove company method at the Admin Facade
 	 * class. The method deletes a company from the DB
 	 * 
-	 * @param company
-	 *            - the company to be deleted from to the DB (sent from the
+	 * @param comp_id
+	 *            - the company ID to be deleted from to the DB (sent from the
 	 *            client side via JSON Object)
+	 * @return Comapny ID deleted from the DB
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
@@ -132,6 +166,9 @@ public class AdminService {
 	 * @param company
 	 *            - the company to be updated (sent from the client side via
 	 *            JSON Object)
+	 * @param comp_id
+	 *            the company ID to be updated in the DB
+	 * @return Company entity updated in DB
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
@@ -146,8 +183,6 @@ public class AdminService {
 			throw new CompanyNotFoundException("Cannot update Company ", e);
 		}
 		return company;
-
-		// return "Company "+company.getId()+" updated successsfully";
 	}
 
 	/**
@@ -196,13 +231,13 @@ public class AdminService {
 	}
 
 	/**
-	 * This web service activates the create company method at the Admin Facade
+	 * This web service activates the create customer method at the Admin Facade
 	 * class. The method adds a new customer to the DB
 	 * 
 	 * @param customer
 	 *            - the customer to be added to the DB (sent from the client
 	 *            side via JSON Object)
-	 * @return
+	 * @return The created customer with the created status
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
@@ -223,16 +258,16 @@ public class AdminService {
 	 * This web service activates the remove customer method at the Admin Facade
 	 * class. The method deletes a customer from the DB
 	 * 
-	 * @param customer
-	 *            - the customer to be deleted from the DB (sent from the client
-	 *            side via JSON Object)
+	 * @param cust_id
+	 *            - the Customer ID to be deleted from to the DB (sent from the
+	 *            client side via JSON Object)
+	 * @return Customer ID deleted from the DB
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
 	@RequestMapping(value = "/adminservice/removecustomer/{cust_id}", method = RequestMethod.DELETE)
 	public String removeCustomer(@PathVariable("cust_id") long cust_id) throws CouponSystemException {
 		AdminFacade adminFacade = (AdminFacade) this.getAdminFacade();
-
 		try {
 			adminFacade.removeCustomer(getCustomer(cust_id));
 		} catch (FacadeException e) {
@@ -248,6 +283,9 @@ public class AdminService {
 	 * @param customer
 	 *            - the customer to be updated (sent from the client side via
 	 *            JSON Object)
+	 * @param cust_id
+	 *            the customer ID to be updated in the DB
+	 * @return customer entity updated in DB
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
@@ -292,7 +330,7 @@ public class AdminService {
 	 * This web service activates the get all customers method at the Admin
 	 * Facade class. The method returns all the customers in the DB
 	 * 
-	 * @return a collection of customers
+	 * @return return all the customers in the DB
 	 * @throws CouponSystemException
 	 *             - the exception that was thrown from the Admin Facade
 	 */
