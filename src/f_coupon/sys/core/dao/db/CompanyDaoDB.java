@@ -8,7 +8,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
-
+import javax.servlet.http.HttpServletRequest;
 import c_coupon.sys.core.beans.Company;
 import c_coupon.sys.core.beans.Coupon;
 import c_coupon.sys.core.beans.coupontype;
@@ -32,7 +32,9 @@ import i_couponSystemException.CouponSystemException;
  * @since 2018-09-06
  */
 public class CompanyDaoDB implements CompanyDAO {
+	private HttpServletRequest request;
 
+     
 	/**
 	 * {@inheritDoc}
 	 */
@@ -403,5 +405,22 @@ public class CompanyDaoDB implements CompanyDAO {
 			ConnectionPool.getInstance().returnConnection(con);
 		}
 	}
+	
+	public long getLoggedCompanyId() throws CouponSystemException{
+		String company_name = null;
+		Company company = null;
+		try{
+			//Get company name from the session
+			javax.servlet.http.Cookie[] ck=request.getCookies();  
+		    if(ck!=null){  
+		     company_name=ck[1].getValue(); 
+		     company = getCompany(company_name);
+		    }
+		}catch(Exception e) {
+			throw new DAOException(" Get Company name from Session failed " + company_name , e);
+		}
+		return company.getId();
+	}
+	
 	
 }

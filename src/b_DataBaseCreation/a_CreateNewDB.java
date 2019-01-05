@@ -35,7 +35,7 @@ public class a_CreateNewDB {
 			System.out.println("driver loaded");
 			// 2. establish a connection to the db - using DriverManager
 			String url = "jdbc:derby://localhost:1527/cs;create=true";
-//			String url = "jdbc:postgresql://localhost:5432/cs?user=admin & password=admin";
+//			String url = "jdbc:postgresql://localhost:5432/cs";
 			con = DriverManager.getConnection(url);
 			System.out.println("connection established" + con);
 		} catch (ClassNotFoundException | SQLException e) {

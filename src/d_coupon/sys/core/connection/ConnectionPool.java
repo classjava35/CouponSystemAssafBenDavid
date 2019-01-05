@@ -31,7 +31,7 @@ public class ConnectionPool {
 	private static ConnectionPool instance;
 
 	private String url = "jdbc:derby://localhost:1527/cs";
-//	private String url = "jdbc:postgresql://localhost:5432/cs?user=admin & password=admin";
+//	private String url = "jdbc:postgresql://localhost:5432/cs";
 
 	// 1. private CTOR
 	/**

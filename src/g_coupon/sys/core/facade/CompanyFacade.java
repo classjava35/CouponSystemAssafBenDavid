@@ -8,6 +8,7 @@ import c_coupon.sys.core.beans.Coupon;
 import c_coupon.sys.core.beans.coupontype;
 import f_coupon.sys.core.dao.db.CompanyDaoDB;
 import f_coupon.sys.core.dao.db.CouponDaoDB;
+import f_coupon.sys.core.dao.db.CustomerDaoDB;
 import i_couponSystemException.FacadeException;
 import i_couponSystemException.CouponSystemException;
 /**
@@ -29,6 +30,7 @@ public class CompanyFacade implements CouponClientFacade {
 	 */
 	public CompanyFacade(CouponDaoDB couponDao, CompanyDaoDB companyDao, Company company) {
 		super();
+		new CustomerDaoDB();
 		couponDaoDB = new CouponDaoDB();
 		compDaoDB = new CompanyDaoDB();
 		this.company = company;

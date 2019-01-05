@@ -1,5 +1,10 @@
 package h_coupon.sys.couponsystem;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -21,7 +26,7 @@ import j_daily.thread.DailyCouponExpirationTask;
  * @version 1.0
  * @since 2018-09-06
  */
-public class CouponSystem {
+public class CouponSystem extends HttpServlet{
 
 	private CouponClientFacade clientFacade;
 	public CompanyDaoDB companyDao;
@@ -80,7 +85,6 @@ public class CouponSystem {
 	 * @return
 	 */
 	public CouponClientFacade login(String name, String password, String clientType) throws CouponSystemException {
-
 		try {
 			// in case the administrator id performing the login
 			if (clientType.equals("admin") && name.equals("admin") && password.equals("1234")) {
@@ -100,28 +104,6 @@ public class CouponSystem {
 		return clientFacade;
 	}
 
-//	CouponClientFacade Type = null;
-//	if((name.equals("admin"))&&(password.equals("1234")))
-//	{
-//			switch (clientType) {
-//			case "admin":
-//				Type = new AdminFacade();
-//				break;
-//			case "company":
-//				Type = new CompanyFacade(companyDao.login(compName, password))));
-//				break;
-//			case "customer":
-//				Type = new CustomerFacade();
-//				break;
-//			default:
-//				Type = null;
-//				break;
-//			}
-//			System.out.println("You have managed to successfuly login as : " + Type.getClass().getSimpleName());
-//			return Type;
-//		}return null;
-//
-//	}
 
 	/**
 	 * Shutdown method close all connection to the Connection pool 
